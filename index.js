@@ -1,4 +1,5 @@
-const config = {
+
+var config = {
   type: Phaser.AUTO, // Which renderer to use
   width: 800, // Canvas width in pixels
   height: 600, // Canvas height in pixels
@@ -8,16 +9,21 @@ const config = {
     create: create,
     update: update
   }
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y:0 } // Top down game, no gravity
+    }
+  }
 };
 
 const game = new Phaser.Game(config);
 let controls;
 
 function preload() {
-  this.load.image("tiles", "../assets/tilesets/tuxon-sample-32px-extruded.png");
+  this.load.image("tiles", "../assets/tilesets/tuxmon-sample-32px-extruded.png");
   this.load.tilemapTiledJSON( "map", "../assets/tilemaps/tuxemon-town.json");
   // Runs once, loads up assets like images and audio
-
 }
 
 function create() {
@@ -31,6 +37,15 @@ function create() {
   const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
   const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
   const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
+
+  worldLayer.setCollisionByProperty({ collides: true})
+
+  const debugGraphics = this.add.graphics().setAlpha(0.75);
+worldLayer.renderDebug(debugGraphics, {
+  tileColor: null, // Color of non-colliding tiles
+  collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+  faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
+});
 }
 
 function update(time, delta) {
